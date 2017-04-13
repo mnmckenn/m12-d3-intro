@@ -25,31 +25,57 @@ var exam3 = [
 
 // You'll have to wait for you page to load to assign events to the elements created in your index.html file
 $(function() {
-  // Select SVG
+    // Select SVG
+    var mySvg = d3.select('#my-svg')
+                   .attr('height', 200);
+    
+    // Reusable draw function
+    var draw = function (exam_data) {
+        // Bind data to selection of rects in your svg 
+        var rects = mySvg.selectAll('rect')
+                     .data(exam_data, function (d) {return d.id});
 
-  // Reusable draw function
+        // Enter rect elements
+        rects.enter()
+             .append('rect')
+             .attr('width', 0)
+             .attr('y', function(d) {return d.id * 40})
+             .attr('height', 30)
+             .attr('x', 20)
+             .merge(rects) // Entering and updating elements rects
+             .transition()
+             .duration(500)
+             .attr('width', function(d) {return d.grade});
+        
 
-    // Bind data to selection of rects in your svg
+       // Transition a remove for exiting elements
+        rects.exit()
+             .transition()
+             .duration(500)
+             .style('width', 0)
+             .remove();
 
+        // Perform the same data-binding for text
+        var texts = mySvg.selectAll('text')
+                     .data(exam_data, function(d) {return d.id});
 
-    // Enter rect elements
+        // enter elements
+        texts.enter()
+            .append('text')
+            .merge(texts)
+            .attr('y', function(d) {return d.id * 40 + 19})
+            .text(function(d) {return d.student})
+            .style('fill', '#FFF')
+            .attr('x', 23);
+        
 
-
-    // Entering and updating elements rects
-
-
-    // Transition a remove for exiting elements
-
-
-    // Perform the same data-binding for text
-
-
-    // enter elements
-
-
-    // Entering and updating elements rects
-
-
+        // Entering and updating elements text
+        texts.exit()
+            .transition()
+            .delay(500)
+            .remove();
+   }
+    
     // Transition a remove for exiting elements
     $('button').on('click', function() {
       var btn = $(this).attr("id");
